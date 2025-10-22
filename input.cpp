@@ -1,15 +1,21 @@
 #include <iostream>
+#include <memory>
 
-class Keyboard {
+class IInput {
 public:
-    std::string getInput() {
+    virtual std::string getInput() = 0;
+};
+
+class Keyboard : public IInput {
+public:
+    std::string getInput() override {
         return "User input from keyboard";
     }
 };
 
-class Mouse {
+class Mouse : public IInput {
 public:
-    std::string getInput() {
+    std::string getInput() override {
         return "User input from mouse";
     }
 };
@@ -21,15 +27,22 @@ public:
 // with one device.
 class InputProcessor {
 public:
-    void processInput() {
-        Keyboard keyboard;
-        std::string input = keyboard.getInput();
-        std::cout << "Processing: " << input;
+    void processInput(IInput& device) {
+        if (typeid(device) == typeid(Keyboard)) {
+            std::cout << "Using Keyboard device\n";
+        }
+        else if (typeid(device) == typeid(Mouse)) {
+            std::cout << "Using Mouse device\n";
+        }
+
+        std::string input = device.getInput();
+        std::cout << "Processing: " << input << std::endl;
     }
 };
 
 // For demonstration
 int main() {
     InputProcessor processor;
-    processor.processInput();
+    Mouse mouse;
+    processor.processInput(mouse);
 }
